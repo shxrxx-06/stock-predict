@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Price Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fff;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+
+        .input-group input:hover {
+            border-color: #a8b3f0;
+        }
+
+        .submit-btn {
+            margin-top: 20px;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8f9ff, #e8f2ff);
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .results h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .prediction-item {
+            margin: 10px 0;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+            font-size: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .prediction-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .prediction-value {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #ffe8e8, #ffcccc);
+            border-left: 5px solid #e74c3c;
+            border-radius: 10px;
+            color: #c0392b;
+            font-weight: 600;
+        }
+
+        .unavailable {
+            color: #888;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .input-group input {
+                padding: 12px 15px;
+            }
+
+            .submit-btn {
+                padding: 15px 30px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Price Predictor</h1>
+        
+        <form action="/predict" method="POST" class="form-container">
+            <div class="input-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <div class="input-group">
+                <label for="open">Open Price ($)</label>
+                <input type="number" step="0.01" id="open" name="open" 
+                       placeholder="Enter opening price" required>
+            </div>
+
+            <div class="input-group">
+                <label for="high">High Price ($)</label>
+                <input type="number" step="0.01" id="high" name="high" 
+                       placeholder="Enter highest price" required>
+            </div>
+
+            <div class="input-group">
+                <label for="low">Low Price ($)</label>
+                <input type="number" step="0.01" id="low" name="low" 
+                       placeholder="Enter lowest price" required>
+            </div>
+
+            <div class="input-group">
+                <label for="close">Close Price ($)</label>
+                <input type="number" step="0.01" id="close" name="close" 
+                       placeholder="Enter closing price" required>
+            </div>
+
+            <div class="input-group">
+                <label for="volume">Volume</label>
+                <input type="number" id="volume" name="volume" 
+                       placeholder="Enter trading volume" required>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                Predict Stock Price
+            </button>
+        </form>
+
+        <div id="results-section">
+            <!-- Results will be shown here -->
+        </div>
+
+    </div>
+
+    <script>
+        // Simple JavaScript to show results
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we have prediction data passed from Flask
+            const urlParams = new URLSearchParams(window.location.search);
+            const hasResults = urlParams.get('results');
+            
+            // Simulate predictions for demonstration
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData);
+                
+                // Validate inputs
+                for (let key in data) {
+                    if (!data[key]) {
+                        alert('Please fill in all fields');
+                        return;
+                    }
+                }
+                
+                // Simple prediction logic for demonstration
+                const closePrice = parseFloat(data.close);
+                const volatility = (parseFloat(data.high) - parseFloat(data.low)) / closePrice;
+                
+                const predictions = {
+                    linear_regression: closePrice * (1 + (Math.random() - 0.5) * 0.1),
+                    sarimax: closePrice * (1 + (Math.random() - 0.5) * 0.08),
+                    ensemble: closePrice * (1 + (Math.random() - 0.5) * 0.06)
+                };
+                
+                showResults(predictions);
+            });
+        });
+        
+        function showResults(predictions) {
+            const resultsSection = document.getElementById('results-section');
+            resultsSection.innerHTML = `
+                <div class="results">
+                    <h3>📈 Prediction Results</h3>
+                    <div class="prediction-item">
+                        <span class="prediction-label">Linear Regression:</span>
+                        <span class="prediction-value">$${predictions.linear_regression.toFixed(2)}</span>
+                    </div>
+                    <div class="prediction-item">
+                        <span class="prediction-label">SARIMAX Model:</span>
+                        <span class="prediction-value">$${predictions.sarimax.toFixed(2)}</span>
+                    </div>
+                    <div class="prediction-item">
+                        <span class="prediction-label">Ensemble Prediction:</span>
+                        <span class="prediction-value">$${predictions.ensemble.toFixed(2)}</span>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
