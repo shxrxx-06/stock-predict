@@ -21,8 +21,8 @@ This project allows users to view, analyze, and predict stock prices in real-tim
 
 🛠️ Installation
 1. Clone the repository:
-git clone https://github.com/your-username/stock-predictor.git
-cd stock-predictor
+git clone [https://github.com/shxrxx-06/stock-predict.git](https://github.com/shxrxx-06/stock-predict)
+cd stock-predict
 2. Install dependencies:
 pip install streamlit yfinance pandas numpy matplotlib scikit-learn keras tensorflow plotly
 3. Run the Streamlit app:
