@@ -10,11 +10,11 @@ This project allows users to view, analyze, and predict stock prices in real-tim
 🗂️ Project Structure
 
 .
-├── templates/           # HTML templates (if Flask is used)
-├── trained_models/      # Saved ML models (e.g., LSTM, Linear Regression)
+├── templates/           # HTML templates (Flask is used)
+├── trained_models/      # Saved ML models ( Timeseries, Linear Regression)
 ├── GOOG.csv             # Raw historical data
 ├── GOOG-year.csv        # Aggregated yearly data
-├── app.py               # (Optional) Flask/Streamlit entry point
+├── app.py               # Flask entry point
 ├── model.py             # ML model creation and training
 ├── predictor.py         # Real-time data fetching & prediction
 ├── ui.py                # Streamlit user interface
